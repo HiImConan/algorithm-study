@@ -22,7 +22,7 @@ class SinglyLinkedList {
   }
   push(val) {
     let newNode = new Node(val);
-    if (this.head) {
+    if (!this.head) {
       this.head = newNode;
       this.tail = this.head;
     } else {
@@ -32,8 +32,26 @@ class SinglyLinkedList {
     this.length++;
     return this;
   }
+  pop() {
+    if (!this.length) return undefined;
+    let current = this.head;
+    while (current.next !== this.tail) {
+      current = current.next;
+    }
+    let tmp = current.next;
+    current.next = null;
+    this.tail = current;
+    this.length--;
+    if (this.length === 0) {
+      this.head = null;
+      this.tail = null;
+    }
+    return tmp.val;
+  }
 }
 
 let list = new SinglyLinkedList();
 list.push("HELLO");
 list.push("GOODBYE");
+list.push("!");
+list.pop();
