@@ -21,8 +21,13 @@ function solution(today, terms, privacies) {
       let [year, month, day] = toNumDate(date);
       month += +validMonth;
       if (month > 12) {
-        year += Math.floor(month / 12);
-        month %= 12;
+        if (month % 12 == 0) {
+          year += Math.floor(month / 12) - 1;
+          month = 12;
+        } else {
+          year += Math.floor(month / 12);
+          month %= 12;
+        }
       }
       {
         day == 1
@@ -31,6 +36,7 @@ function solution(today, terms, privacies) {
             : (privacy = [year, month - 1, 28])
           : (privacy = [year, month, day - 1]);
       }
+      console.log(privacy)
       return privacy;
     });
   }
@@ -52,18 +58,28 @@ function solution(today, terms, privacies) {
         else answer.push(i + 1);
       }
     }
-    // console.log(answer)
+    console.log(answer)
   }
   return answer;
 } 
-solution(
-  "2020.01.01",
-  ["Z 3", "D 5"],
-  [
-    "2019.01.01 D",
-    "2019.11.15 Z",
-    "2019.08.02 D",
-    "2019.07.01 D",
-    "2018.12.28 Z",
-  ]
-)
+solution("2020.12.17", ["A 12"], ["2010.01.01 A", "2019.12.17 A"]);
+
+
+// best practice
+function solution(today, terms, privacies) {
+  var answer = [];
+  var [year, month, date] = today.split(".").map(Number);
+  var todates = year * 12 * 28 + month * 28 + date; // 한 달이 28일로 고정돼있으니 일수로 통일해서 비교하는게 제일 편하다는 생각을 못했다
+  var t = {};
+  terms.forEach((e) => {
+    let [a, b] = e.split(" ");
+    t[a] = Number(b); // key: value 형식의 자료구조
+  });
+  privacies.forEach((e, i) => {
+    var [day, term] = e.split(" ");
+    day = day.split(".").map(Number);
+    var dates = day[0] * 12 * 28 + day[1] * 28 + day[2] + t[term] * 28;
+    if (dates <= todates) answer.push(i + 1);
+  }); // 굉장히 간단한 문제였구나..
+  return answer;
+}
